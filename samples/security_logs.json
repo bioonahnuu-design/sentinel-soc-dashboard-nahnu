@@ -1,0 +1,22 @@
+{
+  "logs": [
+    {
+      "timestamp": "2026-07-25T03:40:00Z",
+      "source_ip": "192.0.2.15",
+      "username": "analyst",
+      "event_type": "login",
+      "status": "failed",
+      "user_agent": "Mozilla/5.0",
+      "country": "Indonesia"
+    },
+    {
+      "timestamp": "2026-07-25T03:42:00Z",
+      "source_ip": "198.51.100.99",
+      "username": "security-admin",
+      "event_type": "login",
+      "status": "success",
+      "user_agent": "Mozilla/5.0",
+      "country": "high-risk"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+# Local secrets
+samples/*.pdf
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Editors and logs
+.vscode/
+.idea/
+*.log
+
+# Local database
+postgres_data/
+
+# Development instructions
+STAGE-*-INSTRUCTIONS.md
+# Local and test databases
+*.db
+*.sqlite
+*.sqlite3

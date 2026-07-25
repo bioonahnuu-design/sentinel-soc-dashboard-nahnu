@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in · Sentinel SOC</title>
+  <link rel="stylesheet" href="/static/login.css?v=1.0.0">
+</head>
+<body>
+  <main class="login-shell">
+    <section class="login-intro">
+      <div class="brand"><span>S</span> Sentinel</div>
+      <p class="eyebrow">SECURITY OPERATIONS CENTER</p>
+      <h1>Defend with visibility.</h1>
+      <p>Authenticate to investigate security telemetry, review detections, and manage incidents.</p>
+      <div class="signal"><i></i> Detection engine protected</div>
+    </section>
+    <section class="login-card">
+      <div class="shield">◇</div>
+      <p class="eyebrow">AUTHORIZED ACCESS ONLY</p>
+      <h2>Analyst sign in</h2>
+      <p class="help">Enter your SOC analyst credentials to continue.</p>
+      <form id="login-form">
+        <label>Username
+          <input id="username" name="username" autocomplete="username" maxlength="100" required autofocus>
+        </label>
+        <label>Password
+          <span class="password-field">
+            <input id="password" name="password" type="password" autocomplete="current-password" maxlength="200" required>
+            <button id="toggle-password" type="button" aria-label="Show password">Show</button>
+          </span>
+        </label>
+        <p class="login-error" id="login-error" role="alert" hidden></p>
+        <button class="sign-in" id="login-submit" type="submit">Sign in securely</button>
+      </form>
+      <small>Sessions expire automatically. Failed attempts are rate limited.</small>
+    </section>
+  </main>
+  <script src="/static/login.js?v=1.0.0"></script>
+</body>
+</html>

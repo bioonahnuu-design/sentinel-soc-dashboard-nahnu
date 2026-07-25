@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: "${DATABASE_URL}"
+      APP_ENV: "${APP_ENV:-development}"
+      BRUTE_FORCE_THRESHOLD: "${BRUTE_FORCE_THRESHOLD:-5}"
+      BRUTE_FORCE_WINDOW_MINUTES: "${BRUTE_FORCE_WINDOW_MINUTES:-10}"
+      SOC_USERNAME: "${SOC_USERNAME}"
+      SOC_PASSWORD_HASH: "${SOC_PASSWORD_HASH}"
+      AUTH_SECRET: "${AUTH_SECRET}"
+      AUTH_SESSION_HOURS: "${AUTH_SESSION_HOURS:-8}"
+      AUTH_SECURE_COOKIE: "${AUTH_SECURE_COOKIE:-false}"
+      DB_POOL_SIZE: "${DB_POOL_SIZE:-5}"
+      DB_MAX_OVERFLOW: "${DB_MAX_OVERFLOW:-10}"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

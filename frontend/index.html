@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sentinel SOC</title>
+  <link rel="stylesheet" href="/static/styles.css?v=1.9.0">
+  <script src="/static/vendor/chart.umd.js?v=4.4.9"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-mark">S</span><span>Sentinel</span></div>
+    <nav>
+      <a class="active" href="#overview">▦ <span>Overview</span></a>
+      <a href="#alerts">△ <span>Alerts</span></a>
+      <a href="#events">⌁ <span>Event Logs</span></a>
+      <a href="/docs" target="_blank">{ } <span>API Docs</span></a>
+    </nav>
+    <div class="status" id="engine-status"><i></i><span>Checking detection engine...</span></div>
+  </aside>
+
+  <main>
+    <div class="system-banner" id="system-banner" role="alert" hidden>
+      <div><strong id="banner-title">Backend offline</strong><span id="banner-message">Dashboard data could not be loaded.</span></div>
+      <button type="button" id="retry-button">Retry connection</button>
+    </div>
+    <header>
+      <div><p class="eyebrow">SECURITY OPERATIONS CENTER</p><h1>Threat Overview</h1></div>
+      <div class="header-actions">
+        <span class="analyst-user" id="analyst-user">SOC Analyst</span>
+        <button class="logout-button" type="button" id="logout-button">Sign out</button>
+        <button class="import-open" type="button" id="import-open">↑ Import logs</button>
+        <label class="analyst-search" aria-label="Search by source IP or username">
+          <span>⌕</span>
+          <input id="search-input" type="search" maxlength="100" placeholder="Search IP or username..." autocomplete="off">
+          <kbd id="search-clear" hidden>Clear</kbd>
+        </label>
+        <label class="time-range">Time range
+          <select id="time-filter">
+            <option value="1">Last 1 hour</option>
+            <option value="24" selected>Last 24 hours</option>
+            <option value="168">Last 7 days</option>
+            <option value="720">Last 30 days</option>
+          </select>
+        </label>
+        <div class="live"><i></i> LIVE <span id="clock"></span></div>
+      </div>
+    </header>
+
+    <section id="overview" class="cards">
+      <article class="metric loading"><span id="events-range-label">Events (24h)</span><strong id="total-events">—</strong><small>All ingested logs</small></article>
+      <article class="metric loading"><span>Failed Logins</span><strong id="failed-logins">—</strong><small>Authentication failures</small></article>
+      <article class="metric loading"><span>Active Alerts</span><strong class="danger" id="active-alerts">—</strong><small>Needs investigation</small></article>
+      <article class="metric loading"><span>Unique IPs</span><strong id="unique-ips">—</strong><small>Observed sources</small></article>
+    </section>
+
+    <section class="grid">
+      <article class="panel wide"><div class="panel-head"><div><h2>Security Events</h2><p>Events detected over the last 24 hours</p></div></div><div class="chart-wrap loading"><canvas id="timeline-chart"></canvas><p class="chart-state">Loading event timeline...</p></div></article>
+      <article class="panel"><div class="panel-head"><div><h2>Top Failed Sources</h2><p>IPs with most failed logins</p></div></div><div class="chart-wrap loading"><canvas id="ip-chart"></canvas><p class="chart-state">Loading source data...</p></div></article>
+    </section>
+
+    <section id="alerts" class="panel table-panel">
+      <div class="panel-head"><div><h2>Recent Alerts</h2><p>Prioritized detections requiring analyst review</p></div><div class="panel-filters"><select id="severity-filter"><option value="">All severity</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select><select id="alert-status-filter"><option value="">All status</option><option value="open">Open</option><option value="acknowledged">Acknowledged</option></select></div></div>
+      <div class="table-scroll"><table><thead><tr><th>Severity</th><th>Detection</th><th>Source IP</th><th>Time</th><th>Status</th><th></th></tr></thead><tbody id="alerts-body"></tbody></table></div>
+      <p class="empty" id="alerts-empty" hidden>No alerts match this filter.</p>
+    </section>
+
+    <section id="events" class="panel table-panel">
+      <div class="panel-head"><div><h2>Latest Events</h2><p>Raw authentication telemetry</p></div><div class="panel-filters"><select id="event-status-filter"><option value="">All results</option><option value="failed">Failed</option><option value="success">Success</option></select></div></div>
+      <div class="table-scroll"><table><thead><tr><th>Time</th><th>Source IP</th><th>User</th><th>Event</th><th>Result</th><th>Country</th></tr></thead><tbody id="events-body"></tbody></table></div>
+      <p class="empty" id="events-empty" hidden>No events match these filters.</p>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="import-modal" hidden>
+    <section class="import-modal" role="dialog" aria-modal="true" aria-labelledby="import-title">
+      <div class="import-title-row">
+        <div><p class="eyebrow">LOG INGESTION</p><h2 id="import-title">Import security logs</h2></div>
+        <button class="modal-close" type="button" id="import-close" aria-label="Close">×</button>
+      </div>
+      <p class="import-help">Upload a UTF-8 CSV or JSON file. Maximum 2 MB and 1,000 records.</p>
+      <label class="drop-zone" id="drop-zone">
+        <input id="log-file" type="file" accept=".csv,.json,application/json,text/csv" hidden>
+        <strong>Choose CSV/JSON file</strong>
+        <span>or drag and drop it here</span>
+        <small id="selected-file">Required: timestamp, source_ip, username, status</small>
+      </label>
+      <div class="import-result" id="import-result" hidden></div>
+      <div class="modal-actions">
+        <button class="secondary-button" type="button" id="import-cancel">Cancel</button>
+        <button class="primary-button" type="button" id="import-submit" disabled>Import logs</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="alert-modal" hidden>
+    <section class="alert-modal" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+      <div class="import-title-row">
+        <div>
+          <p class="eyebrow" id="detail-incident">INCIDENT DETAIL</p>
+          <h2 id="detail-title">Loading alert...</h2>
+        </div>
+        <button class="modal-close" type="button" id="detail-close" aria-label="Close">×</button>
+      </div>
+      <div class="detail-status-row">
+        <span class="badge" id="detail-severity">—</span>
+        <span class="incident-state" id="detail-status">—</span>
+      </div>
+      <p class="detail-description" id="detail-description">Loading incident context...</p>
+      <div class="detail-grid">
+        <div><span>Detection rule</span><strong id="detail-rule">—</strong></div>
+        <div><span>Source IP</span><strong class="mono" id="detail-ip">—</strong></div>
+        <div><span>Detected at</span><strong id="detail-time">—</strong></div>
+        <div><span>Username</span><strong id="detail-username">—</strong></div>
+        <div><span>Event type</span><strong id="detail-event">—</strong></div>
+        <div><span>Result / Country</span><strong id="detail-result">—</strong></div>
+      </div>
+      <div class="raw-log">
+        <span>Raw source log</span>
+        <pre id="detail-raw">No source log attached.</pre>
+      </div>
+      <div class="modal-actions">
+        <button class="report-button" type="button" id="detail-report">⇩ Export report</button>
+        <button class="secondary-button" type="button" id="detail-dismiss">Close</button>
+        <button class="primary-button" type="button" id="detail-ack">Acknowledge incident</button>
+      </div>
+    </section>
+  </div>
+  <script src="/static/app.js?v=1.9.0"></script>
+</body>
+</html>
