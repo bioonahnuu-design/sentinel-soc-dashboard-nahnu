@@ -356,6 +356,20 @@ The automated tests cover:
 - Alert acknowledgement workflow
 - Secrets excluded through `.gitignore`
 
+## Related Learning
+
+This project applies security monitoring and incident response concepts developed through Cisco Networking Academy's **Cyber Threat Management** course.
+
+Related learning includes:
+
+- Threat intelligence and threat modeling
+- Security and vulnerability assessment
+- Risk management and security controls
+- Network and server profiling
+- Incident response fundamentals
+
+[Verify my Cisco Cyber Threat Management badge](https://www.credly.com/badges/4d3b2f53-74ff-4a53-9ffa-c4835e86a98b/public_url)
+
 ## Production Configuration
 
 The deployed application uses environment variables for sensitive configuration.
