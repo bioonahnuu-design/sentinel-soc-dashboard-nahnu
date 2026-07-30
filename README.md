@@ -22,6 +22,12 @@ This project demonstrates a simplified SIEM workflow:
 
 The dashboard displays authentication activity, failed login attempts, active alerts, unique source IPs, suspicious sources, and incidents requiring analyst investigation.
 
+## Project Documentation
+
+A detailed project report covering the system architecture, implemented features, detection workflow, deployment, security design, testing, and dashboard demonstrations is available below:
+
+[Download the complete project documentation (PDF)](docs/sentinel-soc-dashboard-documentation.pdf)
+
 ## Implemented Features
 
 - Authentication-log ingestion through a FastAPI REST API
