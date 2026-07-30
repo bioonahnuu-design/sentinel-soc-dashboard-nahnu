@@ -1,13 +1,3 @@
----
-title: Sentinel SOC Dashboard
-emoji: 🛡️
-colorFrom: blue
-colorTo: green
-sdk: docker
-app_port: 7860
-pinned: false
----
-
 # Sentinel SOC Dashboard
 
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
